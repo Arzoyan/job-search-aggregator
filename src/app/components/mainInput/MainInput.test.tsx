@@ -30,6 +30,6 @@ describe('MainInput', () => {
     test('has default placeholder if none is provided', () => {
         render(<MainInput value="" onChange={mockOnChange} />);
         const inputElement = screen.getByPlaceholderText('Enter location');
-        expect(inputElement).not.toBeInTheDocument();
+        expect(inputElement).toBeInTheDocument();
     });
 });

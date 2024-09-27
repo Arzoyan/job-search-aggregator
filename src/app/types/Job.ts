@@ -9,3 +9,8 @@ export interface IJob {
   applicationUrl: string;
   type: string;
 }
+
+export type CacheEntry = {
+  data: IJob[];
+  expiration: number;
+};

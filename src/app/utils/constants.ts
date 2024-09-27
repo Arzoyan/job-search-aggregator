@@ -108,4 +108,19 @@ export const MOCK_JOBS_3: IJob[] = [
     applicationUrl: "https://example.com/apply/33",
     type: "FULL_STACK",
   },
+  {
+    id: "1444",
+    title: "Frontend Developer",
+    company: "TechCorp",
+    location: "Remote",
+    description: "We are looking for a skilled Frontend Developer...",
+    salary: "$80,000 - $120,000",
+    postedDate: "2024-09-15",
+    applicationUrl: "https://example.com/apply/1444",
+    type: "FRONT_END",
+  },
 ];
+
+export const CACHE_DURATION_MS = 1 * 60 * 1000; // Cache duration: 5 minutes
+
+export const PAGE_SIZE = 5;

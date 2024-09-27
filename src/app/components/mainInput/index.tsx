@@ -16,7 +16,7 @@ const MainInput: React.FC<MainInputProps> = ({ value, onChange, placeholder }) =
             }}
             placeholder={placeholder || "Location"}
             value={value}
-            onChange={(e) => onChange(e.target.value)} // Correctly typed
+            onChange={(e) => onChange(e.target.value.trim())} // Correctly typed
         />
     );
 };

@@ -4,7 +4,9 @@ import { Button, List, Spin, Alert } from 'antd';
 import { IJob } from './types/Job';
 import MainInput from './components/mainInput';
 import MainSelect from './components/mainSelect';
-import { JOB_OPTIONS } from './utils/constants';
+import { JOB_OPTIONS, PAGE_SIZE } from './utils/constants';
+import { fetchJobs } from '@/api/jobsApi';
+
 
 const HomePage = () => {
   const [jobTitle, setJobTitle] = useState<string>('');
@@ -12,58 +14,38 @@ const HomePage = () => {
   const [jobType, setJobType] = useState<string>(''); // New filter for job type
   const [loading, setLoading] = useState<boolean>(false);
   const [jobs, setJobs] = useState<IJob[]>([]);
-  const [cachedJobs, setCachedJobs] = useState<{ [key: string]: IJob[] }>({});
   const [error, setError] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const pageSize = 5;
+
+  const paginatedJobs = jobs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   useEffect(() => {
-    handleSearch();
+    const test = setTimeout(() => {
+      loadJobs(); // Pass true to indicate this is an initial load
+    }, 10)
+
+    return () => {
+      clearTimeout(test)
+    }
   }, []);
 
 
-  const handleSearch = async () => {
-    const cacheKey = `${jobTitle}-${location}-${jobType}`;
-    if (cachedJobs[cacheKey]) {
-      setJobs(cachedJobs[cacheKey]);
-      setCurrentPage(1);
-      return;
-    }
+  const loadJobs = async () => {
 
     setLoading(true);
-    setError('');
-    setJobs([]);
-
+    setError(null);
     try {
-      const responses = await Promise.all([
-        fetch(`http://localhost:3000/api/jobs/api1?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`),
-        fetch(`http://localhost:3000/api/jobs/api2?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`),
-        fetch(`http://localhost:3000/api/jobs/api3?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`),
-      ]);
+      const successfulJobs = await fetchJobs(jobTitle, location, jobType);
+      setJobs(successfulJobs);
 
-      const jobsData = await Promise.all(responses.map(res => res.json()));
-      const aggregatedJobs: IJob[] = jobsData.flat();
+      setCurrentPage(1); // Reset page on initial load
 
-      // Filter jobs based on search input
-      const filteredJobs = aggregatedJobs.filter(job => {
-        const titleMatch = job.title.toLowerCase().includes(jobTitle.toLowerCase());
-        const locationMatch = job.location.toLowerCase().includes(location.toLowerCase());
-
-        const jobTypeMatch = jobType ? job.type === jobType : true; // Make sure to compare the job type correctly
-
-        return titleMatch && locationMatch && jobTypeMatch;
-      });
-
-      setJobs(filteredJobs);
-      setCachedJobs((prev) => ({ ...prev, [cacheKey]: filteredJobs }));
-      setCurrentPage(1);
     } catch (err) {
-      setError('Error fetching jobs');
+      setError('Failed to fetch jobs');
     } finally {
       setLoading(false);
     }
   };
-  const paginatedJobs = jobs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
     <div>
@@ -86,7 +68,7 @@ const HomePage = () => {
           options={JOB_OPTIONS}
           placeholder="Job Type"
         />
-        <Button type='primary' onClick={handleSearch}>Search</Button>
+        <Button type='primary' onClick={loadJobs}>Search</Button>
       </div>
 
       {error && <Alert message={error} type="error" />}
@@ -109,14 +91,14 @@ const HomePage = () => {
               position: "bottom",
               align: "end",
               onChange: setCurrentPage,
-              pageSize: pageSize,
+              pageSize: PAGE_SIZE,
               total: jobs.length,
               current: currentPage
             }}
             renderItem={job => (
               <List.Item>
                 <List.Item.Meta
-                  title={<a href={job.applicationUrl}>{job.title} {`${job.salary ? "/" + job.salary : ""}`}</a>}
+                  title={<a href={job.applicationUrl}>{job.title} {`${job.salary ? "/ " + job.salary : ""}`}</a>}
                   description={`${job.company} / ${job.location} / ${job.postedDate}`}
                 />
                 <div>{job.description}</div>

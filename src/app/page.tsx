@@ -1,95 +1,132 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'; // This indicates it's a client component
+import React, { useEffect, useState } from 'react';
+import { Button, List, Spin, Alert } from 'antd';
+import { IJob } from './types/Job';
+import MainInput from './components/mainInput';
+import MainSelect from './components/mainSelect';
+import { JOB_OPTIONS } from './utils/constants';
 
-export default function Home() {
+const HomePage = () => {
+  const [jobTitle, setJobTitle] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [jobType, setJobType] = useState<string>(''); // New filter for job type
+  const [loading, setLoading] = useState<boolean>(false);
+  const [jobs, setJobs] = useState<IJob[]>([]);
+  const [cachedJobs, setCachedJobs] = useState<{ [key: string]: IJob[] }>({});
+  const [error, setError] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 5;
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
+
+
+  const handleSearch = async () => {
+    const cacheKey = `${jobTitle}-${location}-${jobType}`;
+    if (cachedJobs[cacheKey]) {
+      setJobs(cachedJobs[cacheKey]);
+      setCurrentPage(1);
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setJobs([]);
+
+    try {
+      const responses = await Promise.all([
+        fetch(`http://localhost:3000/api/jobs/api1?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`),
+        fetch(`http://localhost:3000/api/jobs/api2?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`),
+        fetch(`http://localhost:3000/api/jobs/api3?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`),
+      ]);
+
+      const jobsData = await Promise.all(responses.map(res => res.json()));
+      const aggregatedJobs: IJob[] = jobsData.flat();
+
+      // Filter jobs based on search input
+      const filteredJobs = aggregatedJobs.filter(job => {
+        const titleMatch = job.title.toLowerCase().includes(jobTitle.toLowerCase());
+        const locationMatch = job.location.toLowerCase().includes(location.toLowerCase());
+
+        const jobTypeMatch = jobType ? job.type === jobType : true; // Make sure to compare the job type correctly
+
+        return titleMatch && locationMatch && jobTypeMatch;
+      });
+
+      setJobs(filteredJobs);
+      setCachedJobs((prev) => ({ ...prev, [cacheKey]: filteredJobs }));
+      setCurrentPage(1);
+    } catch (err) {
+      setError('Error fetching jobs');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const paginatedJobs = jobs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "12px" }}>
+        <MainInput
+          placeholder="Job Title"
+          value={jobTitle}
+          onChange={setJobTitle}
         />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+        <MainInput
+          placeholder="Location"
+          value={location}
+          onChange={setLocation}
+        />
+
+        <MainSelect
+          value={jobType}
+          onChange={setJobType}
+          options={JOB_OPTIONS}
+          placeholder="Job Type"
+        />
+        <Button type='primary' onClick={handleSearch}>Search</Button>
+      </div>
+
+      {error && <Alert message={error} type="error" />}
+      {loading ? (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '200px',
+        }}>
+          <Spin />
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      )
+        :
+        <>
+          <List
+            itemLayout="vertical"
+            dataSource={paginatedJobs}
+            pagination={{
+              position: "bottom",
+              align: "end",
+              onChange: setCurrentPage,
+              pageSize: pageSize,
+              total: jobs.length,
+              current: currentPage
+            }}
+            renderItem={job => (
+              <List.Item>
+                <List.Item.Meta
+                  title={<a href={job.applicationUrl}>{job.title} {`${job.salary ? "/" + job.salary : ""}`}</a>}
+                  description={`${job.company} / ${job.location} / ${job.postedDate}`}
+                />
+                <div>{job.description}</div>
+              </List.Item>
+            )}
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </>
+      }
     </div>
   );
-}
+};
+
+export default HomePage;

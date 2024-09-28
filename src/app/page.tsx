@@ -6,13 +6,14 @@ import MainInput from './components/mainInput';
 import MainSelect from './components/mainSelect';
 import { JOB_OPTIONS, PAGE_SIZE } from './utils/constants';
 import { fetchJobs } from '@/api/jobsApi';
+import MainLoading from './components/MainLoading';
 
 
 const HomePage = () => {
   const [jobTitle, setJobTitle] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [jobType, setJobType] = useState<string>(''); // New filter for job type
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean | null>(null);
   const [jobs, setJobs] = useState<IJob[]>([]);
   const [error, setError] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -48,6 +49,10 @@ const HomePage = () => {
       setLoading(false);
     }
   };
+
+  if (loading === null) {
+    return <MainLoading />
+  }
 
   return (
     <div>

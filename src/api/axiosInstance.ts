@@ -2,7 +2,8 @@ import axios from "axios";
 
 // Create an Axios instance with default settings
 const axiosInstance = axios.create({
-  baseURL: "https://master--job-search-aggregator.netlify.app/api/jobs/", // Base URL for your API
+  baseURL:
+    "https://66f7f08167e03ebf9951149b--job-search-aggregator.netlify.app/api/jobs/", // Base URL for your API
   timeout: 2000, // Timeout set to 2 seconds
 });
 

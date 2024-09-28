@@ -78,41 +78,41 @@ const HomePage = () => {
         <Button type='primary' onClick={loadJobs}>Search</Button>
       </div>
 
-      {error && <Alert message={error} type="error" />}
-      {loading ? (
-        <div data-testid="loading" style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '200px',
-        }}>
-          <Spin />
-        </div>
-      )
-        :
-        <>
-          <List
-            itemLayout="vertical"
-            dataSource={paginatedJobs}
-            pagination={{
-              position: "bottom",
-              align: "end",
-              onChange: setCurrentPage,
-              pageSize: PAGE_SIZE,
-              total: jobs ? jobs.length : 0,
-              current: currentPage
-            }}
-            renderItem={job => (
-              <List.Item>
-                <List.Item.Meta
-                  title={<a href={job.applicationUrl}>{job.title} {`${job.salary ? "/ " + job.salary : ""}`}</a>}
-                  description={`${job.company} / ${job.location} / ${job.postedDate}`}
-                />
-                <div>{job.description}</div>
-              </List.Item>
-            )}
-          />
-        </>
+      {error ? <Alert message={error} type="error" /> :
+        loading ? (
+          <div data-testid="loading" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '200px',
+          }}>
+            <Spin />
+          </div>
+        )
+          :
+          <>
+            <List
+              itemLayout="vertical"
+              dataSource={paginatedJobs}
+              pagination={{
+                position: "bottom",
+                align: "end",
+                onChange: setCurrentPage,
+                pageSize: PAGE_SIZE,
+                total: jobs ? jobs.length : 0,
+                current: currentPage
+              }}
+              renderItem={job => (
+                <List.Item>
+                  <List.Item.Meta
+                    title={<a href={job.applicationUrl}>{job.title} {`${job.salary ? "/ " + job.salary : ""}`}</a>}
+                    description={`${job.company} / ${job.location} / ${job.postedDate}`}
+                  />
+                  <div>{job.description}</div>
+                </List.Item>
+              )}
+            />
+          </>
       }
     </div>
   );

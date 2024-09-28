@@ -22,13 +22,7 @@ const HomePage = () => {
     : [];
 
   useEffect(() => {
-    const test = setTimeout(() => {
-      loadJobs(); // Pass true to indicate this is an initial load
-    }, 10)
-
-    return () => {
-      clearTimeout(test)
-    }
+    loadJobs(); // Pass true to indicate this is an initial load
   }, []);
 
 
@@ -43,6 +37,12 @@ const HomePage = () => {
       setCurrentPage(1); // Reset page on initial load
 
     } catch (err) {
+
+      if (err instanceof Error) { // Type guard to check if err is an instance of Error
+        setError(err.message || 'Failed to fetch jobs');
+      } else {
+        setError('Failed to fetch jobs'); // Fallback for non-Error cases
+      }
       setError('Failed to fetch jobs');
     } finally {
       setLoading(false);

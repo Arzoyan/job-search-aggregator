@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
+console.log("%csrcapiaxiosInstance.ts:4 baseUrl", "color: #007acc;", baseUrl);
 // Create an Axios instance with default settings
 const axiosInstance = axios.create({
   baseURL: `${baseUrl}/api/jobs/`, // Base URL for your API

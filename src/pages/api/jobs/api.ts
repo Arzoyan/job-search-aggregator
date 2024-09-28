@@ -6,6 +6,7 @@ import axios, { AxiosResponse } from "axios";
 const jobCache: { [key: string]: CacheEntry } = {}; // In-memory cache
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
+console.log("Base URL:", baseUrl); // Log the base URL
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<IJob[]>,

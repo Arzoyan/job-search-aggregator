@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+// Create an Axios instance with default settings
 const axiosInstance = axios.create({
-  baseURL: `https://job-search-aggregator.netlify.app/api/jobs/`, // Base URL for your API
+  baseURL: `${baseUrl}/api/jobs/`, // Base URL for your API
 });
 
 // Add a request interceptor

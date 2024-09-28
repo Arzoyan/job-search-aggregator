@@ -4,9 +4,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
 
 const jobCache: { [key: string]: CacheEntry } = {}; // In-memory cache
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl = "https://job-search-aggregator.netlify.app";
+// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-console.log("Base URL:", baseUrl); // Log the base URL
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<IJob[]>,
@@ -20,7 +20,6 @@ export default async function handler(
   const now = Date.now();
 
   if (cachedData && cachedData.expiration > now) {
-    console.log("Serving from cache:", cacheKey);
     return res.status(200).json(cachedData.data);
   }
 

@@ -18,7 +18,6 @@ export default function handler(
   const cachedData = jobCache[cacheKey];
   const now = Date.now();
   if (cachedData && cachedData.expiration > now) {
-    console.log("Serving from cache:", cacheKey);
     return res.status(200).json(cachedData.data);
   }
 

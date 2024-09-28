@@ -17,7 +17,9 @@ const HomePage = () => {
   const [error, setError] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const paginatedJobs = jobs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const paginatedJobs = jobs && jobs.length > 0
+    ? jobs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+    : [];
 
   useEffect(() => {
     const test = setTimeout(() => {
@@ -33,7 +35,7 @@ const HomePage = () => {
   const loadJobs = async () => {
 
     setLoading(true);
-    setError(null);
+    setError("");
     try {
       const successfulJobs = await fetchJobs(jobTitle, location, jobType);
       setJobs(successfulJobs);
@@ -73,7 +75,7 @@ const HomePage = () => {
 
       {error && <Alert message={error} type="error" />}
       {loading ? (
-        <div style={{
+        <div data-testid="loading" style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -92,7 +94,7 @@ const HomePage = () => {
               align: "end",
               onChange: setCurrentPage,
               pageSize: PAGE_SIZE,
-              total: jobs.length,
+              total: jobs ? jobs.length : 0,
               current: currentPage
             }}
             renderItem={job => (

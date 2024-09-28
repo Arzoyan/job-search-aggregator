@@ -7,6 +7,7 @@ module.exports = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   moduleNameMapper: {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy", // Mock style files
+    "^@/(.*)$": "<rootDir>/src/$1", // Map '@/' to 'src' directory
   },
   setupFilesAfterEnv: ["<rootDir>/setupTests.ts"], // Optional if you have setupTests.ts
 };

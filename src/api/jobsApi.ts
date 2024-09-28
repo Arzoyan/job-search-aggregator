@@ -18,7 +18,6 @@ export const fetchJobs = async (
       axiosInstance.get<IJob[]>(url2), // Specify the expected response type
       axiosInstance.get<IJob[]>(url3), // Specify the expected response type
     ]);
-
     const successfulResponses = results
       .filter(
         (result): result is PromiseFulfilledResult<AxiosResponse<IJob[]>> =>

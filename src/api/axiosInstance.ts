@@ -1,10 +1,10 @@
 import axios from "axios";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
 // Create an Axios instance with default settings
 const axiosInstance = axios.create({
-  baseURL: `${baseUrl}/api/jobs`, // Base URL for your API
-  //   baseURL: "https://job-search-aggregator.netlify.app/api/jobs/", // Base URL for your API
-  timeout: 2000, // Timeout set to 2 seconds
+  baseURL: `${baseUrl}/api/jobs/`, // Base URL for your API
 });
 
 // Add a request interceptor
@@ -29,7 +29,6 @@ axiosInstance.interceptors.response.use(
     // Handle response errors here
     if (error.response) {
       // The request was made, but the server responded with a status code
-
       return Promise.reject(error.response.data); // Optionally return the error data
     } else if (error.request) {
       // The request was made, but no response was received

@@ -57,7 +57,7 @@ export const MOCK_JOBS_1: IJob[] = [
 export const MOCK_JOBS_2: IJob[] = [
   {
     id: "2",
-    title: "Backend Engineer",
+    title: "Backend Engineer ",
     company: "TechCorp",
     location: "Remote",
     description: "We are looking for a skilled Backend Engineer...",
@@ -67,7 +67,7 @@ export const MOCK_JOBS_2: IJob[] = [
   },
   {
     id: "22",
-    title: "Backend Engineer",
+    title: "Backend Engineer ",
     company: "TechCorp",
     location: "Remote",
     description: "We are looking for a skilled Backend Engineer...",
@@ -77,7 +77,27 @@ export const MOCK_JOBS_2: IJob[] = [
   },
   {
     id: "222",
-    title: "Backend Engineer",
+    title: "Backend Engineer ",
+    company: "TechCorp",
+    location: "Remote",
+    description: "We are looking for a skilled Backend Engineer...",
+    postedDate: "2024-09-15",
+    applicationUrl: "https://example.com/apply/222",
+    type: "BACK_END",
+  },
+  {
+    id: "262",
+    title: "Backend Engineer ",
+    company: "TechCorp",
+    location: "Remote",
+    description: "We are looking for a skilled Backend Engineer...",
+    postedDate: "2024-09-15",
+    applicationUrl: "https://example.com/apply/222",
+    type: "BACK_END",
+  },
+  {
+    id: "26236",
+    title: "Backend Engineer ",
     company: "TechCorp",
     location: "Remote",
     description: "We are looking for a skilled Backend Engineer...",

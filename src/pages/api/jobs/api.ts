@@ -24,8 +24,8 @@ export default async function handler(
   }
 
   const apiUrls = [
-    `${baseUrl}/api/jobs/api1?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`,
     `${baseUrl}/api/jobs/api2?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`,
+    `${baseUrl}/api/jobs/api1?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`,
     `${baseUrl}/api/jobs/api3?jobTitle=${jobTitle}&location=${location}&jobType=${jobType}`,
   ];
 

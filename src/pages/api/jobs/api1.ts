@@ -1,10 +1,11 @@
 import { CacheEntry, IJob } from "@/app/types/Job";
 import { CACHE_DURATION_MS, MOCK_JOBS_1 } from "@/app/utils/constants";
+import { delayResponse } from "@/app/utils/helpers";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const jobCache: { [key: string]: CacheEntry } = {}; // In-memory cache
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<IJob[]>,
 ) {
@@ -47,8 +48,6 @@ export default function handler(
     expiration: now + CACHE_DURATION_MS,
   };
 
-  // Simulate delay
-  return setTimeout(() => {
-    return res.status(200).json(filteredJobs);
-  }, 1000);
+  const data = await delayResponse(filteredJobs, 1000);
+  return res.status(200).json(data);
 }

@@ -1,10 +1,11 @@
 import { CacheEntry, IJob } from "@/app/types/Job";
 import { CACHE_DURATION_MS, MOCK_JOBS_2 } from "@/app/utils/constants";
+import { delayResponse } from "@/app/utils/helpers";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const jobCache2: { [key: string]: CacheEntry } = {}; // In-memory cache
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<IJob[]>,
 ) {
@@ -14,14 +15,16 @@ export default function handler(
     location || "any"
   }`;
 
+  const now = Date.now();
+
   // Check if cached data is available and not expired
   const cachedData = jobCache2[cacheKey];
-  const now = Date.now();
   if (cachedData && cachedData.expiration > now) {
-    return res.status(200).json(cachedData.data);
+    // If cache exists, return cached data with a delay
+    return res.status(200).json(await delayResponse(cachedData.data, 3000));
   }
 
-  // If no cached data or expired, fetch and cache the results
+  // If no cache or cache expired, filter jobs
   const filteredJobs = MOCK_JOBS_2.filter((job) => {
     const jobTypeMatch =
       !jobType ||
@@ -41,14 +44,11 @@ export default function handler(
     return jobTypeMatch && titleMatch && locationMatch;
   });
 
-  // Cache the result
+  // Cache the filtered result
   jobCache2[cacheKey] = {
     data: filteredJobs,
     expiration: now + CACHE_DURATION_MS,
   };
-
-  // Simulate delay
-  return setTimeout(() => {
-    return res.status(200).json(filteredJobs);
-  }, 3000); // Delay of 3 seconds
+  const data = await delayResponse(filteredJobs, 3000);
+  return res.status(200).json(data);
 }
